@@ -133,21 +133,24 @@ body {
 .removable-word {
     &:hover {
     padding: 1px 0;
-    background-color: $select-color;
+    background-color: lighten(orange, 35%);
     cursor: pointer;
     border-radius: 3px;
-    box-shadow: 1px 2px 0 darken($select-color, 10%);
+    text-decoration: line-through;
+    // box-shadow: 1px 2px 0 darken($select-color, 10%);
     }
 }
 
 .gap {
     padding: 1px 4px;
-    background-color: $gap-color;
+    // background-color: $gap-color;
     cursor: pointer;
+    border: 1px solid orange;
     border-radius: 3px;
     &:hover {
-        padding: 1px 4px;
-        box-shadow: 1px 2px 0 darken($gap-color, 10%);
+        // padding: 1px 4px;
+        // box-shadow: 1px 2px 0 darken($gap-color, 10%);
+        background-color: lighten(orange, 40%);
     }
 }
 

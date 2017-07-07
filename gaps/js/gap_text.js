@@ -21,8 +21,13 @@ function updateGaps() {
 function updateGapContent() {
     updateGaps();
     gaps.forEach( (gap, index) => {
+        console.log(gap.dataset.word.length);
+        let gapMarker = ''
+        for (let i of gap.dataset.word) {
+            gapMarker += '__ '
+        }
         const gapIndex = index + 1;
-        gap.innerHTML = `_______________` + `<sup class="gap-index">${gapIndex}</sup>`;
+        gap.innerHTML = gapMarker + `<sup class="gap-index">${gapIndex}</sup>`;
     })
 }
 
@@ -49,7 +54,7 @@ processButton.addEventListener('click', function(e) {
         if (match === 'br' || match === 'p') {
             return match;
         } else {
-            return `<span class="removable-word">${match}</span>`;
+            return `<span class="removable-word" title="Click to add gap">${match}</span>`;
         }
     }
 
@@ -62,32 +67,31 @@ processButton.addEventListener('click', function(e) {
         const item = e.target;
         if (item.classList.contains('gap')) {
             removeGap(item);
-        } else {
+        } else if (item.classList.contains('removable-word')){
             addGap(item);
         }
 
         function addGap(word) {
-            const currentWord = word.cloneNode(true);
-            const wordText = word.textContent;
-            const id = rand(1, 10000);
+            const listItem = document.createElement('li');
 
-            wordlist.appendChild(currentWord);
-            currentWord.outerHTML = `<li class="wordlist-item">${wordText}</li>`;
-            wordlist.lastElementChild.title = 'Click to remove from list';
-            wordlist.lastElementChild.dataset.id = word.dataset.id = id;
-            wordlist.lastElementChild.dataset.word = word.dataset.word = word.textContent;
+            listItem.classList.add('wordlist-item');
+            listItem.title = 'Click to remove from list';
+            listItem.textContent = listItem.dataset.word = word.dataset.word = word.textContent;
+            listItem.dataset.id = word.dataset.id = rand(1, 100000);
+
+            wordlist.appendChild(listItem);
+
             word.classList.remove('removable-word')
             word.classList.add('gap');
-            word.textContent = '_______________';
             word.title = 'Click to remove gap';
         }
 
         function removeGap(item) {
             const wordlistItem = wordlist.querySelector(`[data-id="${item.dataset.id}"]`);
-            wordlist.removeChild(wordlistItem);
             item.textContent = item.dataset.word;
             item.classList.remove('gap');
-            item.classList.add('removable-word')
+            item.classList.add('removable-word');
+            wordlist.removeChild(wordlistItem);
         }
 
         updateGapContent();
@@ -117,11 +121,7 @@ processButton.addEventListener('click', function(e) {
         }
     }
 
-    words.forEach(addGapEvent);
-    words.forEach(word => {
-        word.title = 'Click to add gap';
-    })
-
+    processedText.addEventListener('click', handleGap);
     wordlist.addEventListener('click', removeWord);
     wordlist.addEventListener('mousedown', activate);
 });
