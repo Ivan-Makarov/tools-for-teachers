@@ -18,6 +18,14 @@ function updateGaps() {
     gaps = [...processedText.querySelectorAll('.gap')]
 }
 
+function updateGapContent() {
+    updateGaps();
+    gaps.forEach( (gap, index) => {
+        const gapIndex = index + 1;
+        gap.innerHTML = `_______________` + `<sup class="gap-index">${gapIndex}</sup>`;
+    })
+}
+
 function updateWordlist() {
     wordlistItems = [...wordlist.querySelectorAll('.wordlist-item')]
 }
@@ -72,7 +80,7 @@ processButton.addEventListener('click', function(e) {
 
             word.classList.remove('removable-word')
             word.classList.add('gap');
-            // updateGaps();
+
             // console.log(id);
             // console.log(gaps);
             // function thisGap(gap) {
@@ -80,9 +88,13 @@ processButton.addEventListener('click', function(e) {
             //     return gap.dataset.id == id;
             // }
             // let x = gaps.findIndex(thisGap);
-
             word.textContent = '_______________';
             word.title = 'Click to remove gap';
+            // updateGaps();
+            // gaps.forEach(gap => {
+            //     gap.textContent += gaps.indexOf(gap);
+            // })
+            // updateGapContent();
         }
 
         function removeGap(item) {
@@ -91,9 +103,10 @@ processButton.addEventListener('click', function(e) {
             item.textContent = item.dataset.word;
             item.classList.remove('gap');
             item.classList.add('removable-word')
+            // updateGapContent();
         }
 
-        updateGaps();
+        updateGapContent();
         updateWordlist()
     }
 
@@ -109,6 +122,7 @@ processButton.addEventListener('click', function(e) {
             textItem.classList.remove('gap');
             textItem.classList.add('removable-word');
             wordlist.removeChild(item);
+            updateGapContent();
         }
     }
 
