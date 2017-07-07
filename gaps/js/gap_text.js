@@ -21,10 +21,13 @@ function updateGaps() {
 function updateGapContent() {
     updateGaps();
     gaps.forEach( (gap, index) => {
-        console.log(gap.dataset.word.length);
         let gapMarker = ''
         for (let i of gap.dataset.word) {
-            gapMarker += '__ '
+            if (gap.dataset.word.indexOf(i) == 0) {
+                gapMarker += i;
+            } else {
+                gapMarker += '__ '
+            }
         }
         const gapIndex = index + 1;
         gap.innerHTML = gapMarker + `<sup class="gap-index">${gapIndex}</sup>`;
