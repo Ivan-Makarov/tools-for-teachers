@@ -186,7 +186,7 @@ processButton.addEventListener('click', function(e) {
     processedText.addEventListener('click', handleGap);
     wordlist.addEventListener('click', removeWordOnClick);
     wordlist.addEventListener('mousedown', activate);
-    removeArtButton.addEventListener('click', removeArticles);
+    removeArtButton.addEventListener('click', toggleArticles);
 });
 
 function changeGapMode(selector) {
@@ -280,7 +280,24 @@ hideNumbersButton.addEventListener('click', (e) => {
     e.preventDefault();
 })
 
-function removeArticles(e) {
+function toggleArticles(e) {
     e.preventDefault();
-    processedText.innerHTML = processedText.innerHTML.replace(/\ba\b|\ban\b|\bthe\b|\bA\b|\bAN\b|\bTHE\b|\bAn\b|\bThe\b/g, '___');
+
+    function replaceArticles(match) {
+        return `<span class="gap-article" data-article="${match}">___</span>`
+    }
+
+    function restoreArticle(gap) {
+        const article = gap.dataset.article;
+        gap.outerHTML = article;
+    }
+
+    if (e.target.dataset.state == 0) {
+        processedText.innerHTML = processedText.innerHTML.replace(/\ba\b|\ban\b|\bthe\b|\bA\b|\bAN\b|\bTHE\b|\bAn\b|\bThe\b/g, replaceArticles);
+        e.target.dataset.state = 1;
+    } else {
+        const articleGaps = [...processedText.querySelectorAll('.gap-article')];
+        articleGaps.forEach(restoreArticle);
+        e.target.dataset.state = 0;
+    }
 }
