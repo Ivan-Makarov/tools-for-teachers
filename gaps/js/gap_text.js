@@ -9,6 +9,7 @@ const wordlist = wordlistBox.querySelector('.wordlist');
 const gapModeSelectors = [...document.querySelectorAll('input')];
 const clearWordlistButton = wordlistBox.querySelector('.clear-wordlist');
 const hideNumbersButton = document.querySelector('.gap-options--hide-numbers');
+const removeArtButton = document.querySelector('.gap-options--remove-articles');
 
 let gaps = [...processedText.querySelectorAll('.gap')];
 let wordlistItems = [...wordlist.querySelectorAll('.wordlist-item')];
@@ -185,6 +186,7 @@ processButton.addEventListener('click', function(e) {
     processedText.addEventListener('click', handleGap);
     wordlist.addEventListener('click', removeWordOnClick);
     wordlist.addEventListener('mousedown', activate);
+    removeArtButton.addEventListener('click', removeArticles);
 });
 
 function changeGapMode(selector) {
@@ -277,3 +279,8 @@ function handleControls() {
 hideNumbersButton.addEventListener('click', (e) => {
     e.preventDefault();
 })
+
+function removeArticles(e) {
+    e.preventDefault();
+    processedText.innerHTML = processedText.innerHTML.replace(/\ba\b|\ban\b|\bthe\b|\bA\b|\bAN\b|\bTHE\b|\bAn\b|\bThe\b/g, '___');
+}
