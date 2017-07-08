@@ -38,13 +38,13 @@ body {
     border-radius: 5px;
     border: 0;
     position: absolute;
-    top: 0;
+    bottom: 00px;
     left: 830px;
     cursor: pointer;
     background-color: $button-color;
     box-shadow: 2px 2px 0 darken($button-color, 50%);
     &:active {
-        top: 2px;
+        bottom: -2px;
         left: 832px;
         box-shadow: 0 0 0 0;
         transition: 0.1s;
@@ -74,7 +74,7 @@ body {
     left: 830px;
     padding: 15px;
     min-width: 200px;
-    background-color: $wordlist-color;
+    background-color: lighten($wordlist-color, 5%);
     border-radius: 8px;
     white-space: nowrap;
     p {
@@ -86,8 +86,42 @@ body {
 
 .wordlist {
     list-style-type: none;
+    position: relative;
     padding: 0;
     margin: 0;
+    &--controls {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+    }
+    &--btn {
+        box-sizing: border-box;
+        background-color: rgba(white, 0.4);
+        cursor: pointer;
+        border: 0;
+        padding: 2px 8px;
+        margin-left: 5px;
+        border-radius: 3px;
+        font-size: 15px;
+        box-shadow: 1px 2px 0 darken($wordlist-color, 10%);
+        &:hover {
+            background-color: rgba(white, 0.7);
+        }
+        &:focus {
+            outline-color: rgba(white, 0.7);
+        }
+        &.clear-wordlist {
+            &:hover {
+                color: lighten(red, 20%);
+            }
+        }
+        &:active {
+            position: relative;
+            top: 2px;
+            left: 1px;
+            box-shadow: 0 0 0;
+        }
+    }
 }
 
 .wordlist-item {
@@ -98,6 +132,7 @@ body {
     border-radius: 3px;
     background-color: lighten($wordlist-color, 10%);
     box-shadow: 1px 2px 0 darken($wordlist-color, 10%);
+    min-height: 1.2em;
     &__active {
         position: relative;
         top: 2px;
@@ -106,51 +141,73 @@ body {
     }
     &::after {
         position: absolute;
-        top: -3px;
-        right: 5px;
-        content: "\00D7";
+        top: 2px;
+        right: 7px;
+        font-family: FontAwesome;
+        content: "\f00d";
         display: block;
         height: 10px;
         width: 10px;
-        font-size: 22px;
+        // font-size: 22px;
         color: darken($wordlist-color, 10%);
     }
     &:hover {
         &::after {
             position: absolute;
-            top: -3px;
-            right: 5px;
-            content: "\00D7";
+            top: 2px;
+            right: 7px;
+            content: "\f00d";
+            font-family: FontAwesome;
             display: block;
             height: 10px;
             width: 10px;
-            font-size: 22px;
+            // font-size: 22px;
             color: darken($wordlist-color, 50%);
         }
     }
 }
 
 .removable-word {
+    padding: 2px;
     &:hover {
-    padding: 1px 0;
-    background-color: lighten(orange, 35%);
-    cursor: pointer;
-    border-radius: 3px;
-    text-decoration: line-through;
-    // box-shadow: 1px 2px 0 darken($select-color, 10%);
+        padding: 2px;
+        background-color: orange;
+        cursor: pointer;
+        border-radius: 3px;
+        color: white;
     }
 }
 
 .gap {
     padding: 1px 4px;
-    // background-color: $gap-color;
     cursor: pointer;
     border: 1px solid orange;
     border-radius: 3px;
+    white-space: nowrap;
+    background-color: white;
     &:hover {
-        // padding: 1px 4px;
-        // box-shadow: 1px 2px 0 darken($gap-color, 10%);
         background-color: lighten(orange, 40%);
+    }
+    &__unclickable {
+        &:hover {
+            cursor: default;
+            background-color: white;
+        }
+    }
+}
+
+.gap-options {
+    position: absolute;
+    top: 0;
+    left: -190px;
+    padding: 15px;
+    background-color: lighten($blue, 10%);
+    border-radius: 8px;
+    input {
+        margin-bottom: 15px;
+        &:first-of-type {
+            margin-top: 15px;
+        }
     }
 }
 

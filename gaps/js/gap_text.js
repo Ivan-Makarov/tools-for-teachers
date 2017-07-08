@@ -6,9 +6,14 @@ const draft = document.querySelector('.worksheet-draft');
 const processedText = draft.querySelector('.processed-text');
 const wordlistBox = draft.querySelector('.wordlist-box');
 const wordlist = wordlistBox.querySelector('.wordlist');
+const gapModeSelectors = [...document.querySelectorAll('input')];
+const clearWordlistButton = wordlistBox.querySelector('.clear-wordlist');
+
 let gaps = [...processedText.querySelectorAll('.gap')];
 let wordlistItems = [...wordlist.querySelectorAll('.wordlist-item')];
+let gapMode = 'plain';
 
+let editWordlistButton = wordlistBox.querySelector('.edit-wordlist');
 
 function rand(min,max) {
     return Math.floor( Math.random() * ( max - min + 1 ) + min );
@@ -18,30 +23,87 @@ function updateGaps() {
     gaps = [...processedText.querySelectorAll('.gap')]
 }
 
-function updateGapContent() {
+function updateGapIndeces() {
     updateGaps();
     gaps.forEach( (gap, index) => {
-        let gapMarker = ''
+        const gapIndexField = gap.querySelector('.gap-index');
+        const gapIndex = index + 1;
+
+        gapIndexField.textContent = gapIndex;
+    })
+}
+
+function addGapMarker(gap) {
+    let gapMarker = '';
+
+    function addFirstLetter() {
+        gapMarker = gap.dataset.word[0] + '_______________';
+    }
+
+    function addLetterCount() {
+        for (let i of gap.dataset.word) {
+            gapMarker += '__ ';
+        }
+    }
+
+    function addFirstLetterCount() {
         for (let i of gap.dataset.word) {
             if (gap.dataset.word.indexOf(i) == 0) {
                 gapMarker += i;
             } else {
-                gapMarker += '__ '
+                gapMarker += '__ ';
             }
         }
-        const gapIndex = index + 1;
-        gap.innerHTML = gapMarker + `<sup class="gap-index">${gapIndex}</sup>`;
-    })
+    }
+
+    switch(gapMode) {
+        case 'plain':
+            gapMarker = "_______________";
+            break;
+        case 'plain-first':
+            addFirstLetter();
+            break
+        case 'number':
+            addLetterCount();
+            break;
+        case 'number-first':
+            addFirstLetterCount();
+            break;
+        default:
+            break;
+    }
+
+    gap.innerHTML = gapMarker;
 }
 
 function updateWordlist() {
     wordlistItems = [...wordlist.querySelectorAll('.wordlist-item')]
 }
 
+function removeWord(item) {
+    const textItem = processedText.querySelector(`[data-id="${item.dataset.id}"]`);
+    textItem.textContent = item.dataset.word;
+    textItem.classList.remove('gap');
+    textItem.classList.add('removable-word');
+    wordlist.removeChild(item);
+    updateGapIndeces();
+    updateWordlist()
+}
+
+
+function removeWordOnClick(e) {
+    const item = e.target;
+    if (item.classList.contains('wordlist-item')) {
+        removeWord(item);
+    }
+}
+
 processButton.addEventListener('click', function(e) {
     e.preventDefault();
 
     draft.classList.remove('hidden');
+    textToProcess.classList.add('hidden');
+    processButton.classList.add('hidden');
 
     function breakLines(text) {
         return text.split(/\n/);
@@ -87,6 +149,12 @@ processButton.addEventListener('click', function(e) {
             word.classList.remove('removable-word')
             word.classList.add('gap');
             word.title = 'Click to remove gap';
+            addGapMarker(word);
+
+            const gapIndex = document.createElement('sup');
+            word.appendChild(gapIndex);
+            gapIndex.classList.add('gap-index');
+
         }
 
         function removeGap(item) {
@@ -97,24 +165,12 @@ processButton.addEventListener('click', function(e) {
             wordlist.removeChild(wordlistItem);
         }
 
-        updateGapContent();
+        updateGapIndeces();
         updateWordlist()
     }
 
     function addGapEvent(word) {
         word.addEventListener('click', handleGap);
-    }
-
-    function removeWord(e) {
-        const item = e.target;
-        if (item.classList.contains('wordlist-item')) {
-            const textItem = processedText.querySelector(`[data-id="${item.dataset.id}"]`);
-            textItem.textContent = item.dataset.word;
-            textItem.classList.remove('gap');
-            textItem.classList.add('removable-word');
-            wordlist.removeChild(item);
-            updateGapContent();
-        }
     }
 
     function activate(e) {
@@ -125,6 +181,47 @@ processButton.addEventListener('click', function(e) {
     }
 
     processedText.addEventListener('click', handleGap);
-    wordlist.addEventListener('click', removeWord);
+    wordlist.addEventListener('click', removeWordOnClick);
     wordlist.addEventListener('mousedown', activate);
 });
+
+function changeGapMode(selector) {
+    selector.addEventListener('change', () => {
+        gapMode = selector.value;
+    });
+}
+
+gapModeSelectors.forEach(changeGapMode);
+
+clearWordlistButton.addEventListener('click', (e) => {
+    wordlistItems.forEach(removeWord);
+});
+
+function updateBtns() {
+    editWordlistButton = wordlistBox.querySelector('.edit-wordlist');
+    saveWordlistButton = wordlistBox.querySelector('.save-wordlist');
+}
+
+function activateBtns() {
+    const btn = editWordlistButton;
+    if (btn.classList.contains('edit-wordlist')) {
+        btn.classList.remove('edit-wordlist');
+        btn.classList.add('save-wordlist');
+        btn.innerHTML = '<i class="fa fa-floppy-o" aria-hidden="true"></i>';
+        function openEdits(item) {
+            item.innerHTML = `<input value="${item.dataset.word}" type="text">`;
+        }
+        wordlistItems.forEach(openEdits);
+    } else {
+        btn.classList.remove('save-wordlist');
+        btn.classList.add('edit-wordlist')
+        btn.innerHTML = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>';
+        function saveEdits(item) {
+            const newWord = item.querySelector('input').value;
+            item.innerHTML = `${newWord}`;
+        }
+        wordlistItems.forEach(saveEdits);
+    }
+}
+
+editWordlistButton.addEventListener('click', activateBtns);

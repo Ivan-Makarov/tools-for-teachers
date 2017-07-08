@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="../fonts/font-awesome/css/font-awesome.min.css">
     <script src="js/gap_text.js" defer></script>
 </head>
 <body>
@@ -20,8 +21,20 @@
             </div>
             <div class="wordlist-box">
                 <p>Word list</p>
+                <div class="wordlist--controls">
+                    <button class="wordlist--btn edit-wordlist"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                    <button class="wordlist--btn clear-wordlist"><i class="fa fa-times" aria-hidden="true"></i> all</button>
+                </div>
                 <ul class="wordlist"></ul>
             </div>
+            <form class="gap-options">
+                <label for="gap-options--item">Gap type <br>
+                    <input name="gap-options--item" type="radio" value="plain" checked>dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">_____</span> <br>
+                    <input name="gap-options--item" type="radio" value="plain-first">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d_____</span> <br>
+                    <input name="gap-options--item" type="radio" value="number">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">__ __ __</span> <br>
+                    <input name="gap-options--item" type="radio" value="number-first">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d __ __</span> <br>
+                </label>
+            </form>
         </div>
     </div>
 </body>
