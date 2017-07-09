@@ -13,6 +13,41 @@ $select-color: $green;
 $wordlist-color: $turqoise;
 $gap-color: $coral;
 
+@mixin control-button {
+    box-sizing: border-box;
+    cursor: pointer;
+    border: 0;
+    padding: 2px 8px;
+    font-size: 15px;
+    position: relative;
+    border-radius: 3px;
+    &:focus {
+        outline: none;
+    }
+    &:active {
+        top: 2px;
+        left: 1px;
+        box-shadow: 0 0 0;
+    }
+    &__active {
+        transition: 0.5s;
+        background-color: rgba(white, 0.4);
+        box-shadow: 1px 2px 0 rgba(black, 0.2);
+        &:hover {
+            background-color: rgba(white, 0.7);
+        }
+    }
+    &__inactive {
+        transition: 0.5s;
+        box-shadow: 0 0 0 0;
+        top: 2px;
+        left: 1px;
+        background-color: rgba(white, 0.4);
+        color: lighten(gray, 10%);
+        cursor: default;
+    }
+}
+
 body {
     background-color: $body-color;
 }
@@ -95,47 +130,8 @@ body {
         right: 15px;
     }
     &--btn {
-        box-sizing: border-box;
-        cursor: pointer;
-        border: 0;
-        padding: 2px 8px;
+        @include control-button;
         margin-left: 5px;
-        border-radius: 3px;
-        font-size: 15px;
-        position: relative;
-        &:focus {
-            outline: none;
-        }
-        &:active {
-            top: 2px;
-            left: 1px;
-            box-shadow: 0 0 0;
-        }
-        &__active {
-            transition: 0.5s;
-            background-color: rgba(white, 0.4);
-            box-shadow: 1px 2px 0 darken($wordlist-color, 10%);
-            &.clear-wordlist {
-                &:hover {
-                    color: lighten(red, 20%);
-                }
-            }
-            &:hover {
-                background-color: rgba(white, 0.7);
-            }
-        }
-        &__inactive {
-            transition: 0.5s;
-            box-shadow: 0 0 0 0;
-            top: 2px;
-            left: 1px;
-            background-color: rgba(white, 0.4);
-            color: lighten(gray, 10%);
-            cursor: default;
-            &:focus {
-                outline: none;
-            }
-        }
     }
 }
 
@@ -196,7 +192,7 @@ body {
 .gap {
     padding: 1px 4px;
     cursor: pointer;
-    border: 1px solid orange;
+    border: 2px solid orange;
     border-radius: 3px;
     white-space: nowrap;
     background-color: white;
@@ -225,7 +221,13 @@ body {
         }
     }
     &--control {
+        @include control-button;
         display: block;
+        width: 100%;
+        padding: 5px;
+        &:nth-child(n+1) {
+            margin-top: 10px;
+        }
     }
 }
 

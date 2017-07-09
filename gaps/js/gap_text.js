@@ -259,32 +259,43 @@ function hideGapNumbers(e) {
 }
 
 function onHideGapNumbersBtn() {
-    hideNumbersButton.addEventListener('click', hideGapNumbers)
+    hideNumbersButton.removeEventListener('click', blockButton);
+    hideNumbersButton.addEventListener('click', hideGapNumbers);
+    hideNumbersButton.classList.remove('gap-options--control__inactive');
+    hideNumbersButton.classList.add('gap-options--control__active');
 }
 
 function offHideGapNumbersBtn() {
-    hideNumbersButton.removeEventListener('click', hideGapNumbers)
+    hideNumbersButton.removeEventListener('click', hideGapNumbers);
+    hideNumbersButton.addEventListener('click', blockButton);
+    hideNumbersButton.dataset.state = 0;
+    hideNumbersButton.textContent = 'Hide gap numbers';
+    hideNumbersButton.classList.remove('gap-options--control__active');
+    hideNumbersButton.classList.add('gap-options--control__inactive');
 }
 
+hideNumbersButton.addEventListener('click', blockButton)
+
 function handleControls() {
-    if (!gaps.length) {
+    if (gaps.length === 0) {
         offEditBtns()
         offHideGapNumbersBtn();
+
     } else if (gaps.length === 1) {
         onEditBtns();
         onHideGapNumbersBtn();
     }
 }
 
-hideNumbersButton.addEventListener('click', (e) => {
+function blockButton(e) {
     e.preventDefault();
-})
+}
 
 function toggleArticles(e) {
     e.preventDefault();
 
     function replaceArticles(match) {
-        return `<span class="gap-article" data-article="${match}">___</span>`
+        return `<span class="gap-article" title="" data-article="${match}">___</span>`
     }
 
     function restoreArticle(gap) {
