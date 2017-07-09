@@ -294,17 +294,31 @@ function blockButton(e) {
 function toggleArticles(e) {
     e.preventDefault();
 
-    function replaceArticles(match) {
-        return `<span class="gap-article" title="" data-article="${match}">___</span>`
-    }
-
     function restoreArticle(gap) {
         const article = gap.dataset.article;
-        gap.outerHTML = article;
+        gap.outerHTML = `<span class="removable-word" title="Click to add gap">${article}</span>`
     }
 
     if (e.target.dataset.state == 0) {
-        processedText.innerHTML = processedText.innerHTML.replace(/\ba\b|\ban\b|\bthe\b|\bA\b|\bAN\b|\bTHE\b|\bAn\b|\bThe\b/g, replaceArticles);
+        function isArticle(item) {
+            const regexArt = /\ba\b|\ban\b|\bthe\b|\bA\b|\bAN\b|\bTHE\b|\bAn\b|\bThe\b/g;
+            const article = item.textContent.match(regexArt);
+            if (article !== null) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        const words = [...processedText.querySelectorAll('.removable-word')];
+
+        function artRem(word) {
+            if (isArticle(word)) {
+                word.outerHTML = `<span class="gap-article" title="" data-article="${word.textContent}">___</span>`;
+            }
+        }
+
+        words.forEach(artRem);
         e.target.dataset.state = 1;
     } else {
         const articleGaps = [...processedText.querySelectorAll('.gap-article')];
