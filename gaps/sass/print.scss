@@ -1,0 +1,57 @@
+$fira: 'Fira Sans', Arial, Helvetica, sans-serif;
+$pt: 'PT Sans', Arial, Helvetica, sans-serif;
+
+body {
+    font-family: $fira;
+}
+
+.worksheet-draft {
+    margin: 0;
+    padding: 1.5cm;
+    width: 100%;
+    display: -webkit-flex;
+    display: -ms-flex;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.wordlist-box {
+    position: static;
+    p {
+        display: none;
+    }
+}
+
+.wordlist {
+    display: -webkit-flex;
+    display: -ms-flex;
+    display: flex;
+    justify-content: space-around;
+    &--controls {
+        display: none;
+    }
+}
+
+.wordlist-item {
+    &:after {
+        content: '';
+    }
+}
+
+
+.processed-text {
+    font-size: 12pt;
+    font-family: 'Fira Sans';
+}
+
+.gap-options {
+    display: none;
+}
+
+.gap {
+    border: 0;
+    font-family: $pt;
+    .gap-index {
+        font-family: $fira;
+    }
+}

@@ -13,6 +13,10 @@ $select-color: $green;
 $wordlist-color: $turqoise;
 $gap-color: $coral;
 
+@import url('https://fonts.googleapis.com/css?family=PT+Sans:400,700');
+
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans:400,700');
+
 @mixin control-button {
     box-sizing: border-box;
     cursor: pointer;
@@ -50,6 +54,7 @@ $gap-color: $coral;
 
 body {
     background-color: $body-color;
+    font-family: 'PT Sans', Arial, Helvetica, sans-serif;
 }
 
 .wrapper {

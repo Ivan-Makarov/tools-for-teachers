@@ -6,10 +6,10 @@ const draft = document.querySelector('.worksheet-draft');
 const processedText = draft.querySelector('.processed-text');
 const wordlistBox = draft.querySelector('.wordlist-box');
 const wordlist = wordlistBox.querySelector('.wordlist');
-const gapModeSelectors = [...document.querySelectorAll('input')];
+const gapModeSelectors = [...draft.querySelectorAll('.gap-options--selector')];
 const clearWordlistButton = wordlistBox.querySelector('.clear-wordlist');
-const hideNumbersButton = document.querySelector('.gap-options--hide-numbers');
-const removeArtButton = document.querySelector('.gap-options--remove-articles');
+const hideNumbersButton = draft.querySelector('.gap-options--hide-numbers');
+const removeArtButton = draft.querySelector('.gap-options--remove-articles');
 
 let gaps = [...processedText.querySelectorAll('.gap')];
 let wordlistItems = [...wordlist.querySelectorAll('.wordlist-item')];
