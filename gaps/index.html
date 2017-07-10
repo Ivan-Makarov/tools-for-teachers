@@ -13,7 +13,7 @@
 <body>
     <div class="wrapper">
         <form>
-            <textarea class="raw-text" name="name" rows="8" cols="80"></textarea>
+            <textarea class="raw-text" name="name" rows="8" cols="80">If to live in this style is to be eccentric, it must be confessed that there is something good in eccentricity. The mansion in Saville Row, though not sumptuous, was exceedingly comfortable. The habits of its occupant were such as to demand but little from the sole domestic, but Phileas Fogg required him to be almost superhumanly prompt and regular. On this very 2nd of October he had dismissed James Forster, because that luckless youth had brought him shaving-water at eighty-four degrees Fahrenheit instead of eighty-six; and he was awaiting his successor, who was due at the house between eleven and half-past. Phileas Fogg was seated squarely in his armchair, his feet close together like those of a grenadier on parade, his hands resting on his knees, his body straight, his head erect; he was steadily watching a complicated clock which indicated the hours, the minutes, the seconds, the days, the months, and the years.</textarea>
             <button class="process-button" type="submit">Transform</button>
         </form>
         <div class="worksheet-draft hidden">
@@ -29,12 +29,13 @@
                 <ul class="wordlist"></ul>
             </div>
             <form class="gap-options">
-                <label for="gap-options--item">Gap type <br>
-                    <input name="gap-options--item" type="radio" value="plain" checked>dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">_____</span> <br>
-                    <input name="gap-options--item" type="radio" value="plain-first">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d_____</span> <br>
-                    <input name="gap-options--item" type="radio" value="number">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">__ __ __</span> <br>
-                    <input name="gap-options--item" type="radio" value="number-first">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d __ __</span> <br>
-                </label>
+                <fieldset class="gap-options--selectors">
+                    <p class="gap-options--title">Gap type</p>
+                    <input class="gap-options--selector" name="gap-options--item" type="radio" value="plain" checked>dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">_____</span> <br>
+                    <input class="gap-options--selector" name="gap-options--item" type="radio" value="plain-first">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d_____</span> <br>
+                    <input class="gap-options--selector" name="gap-options--item" type="radio" value="number">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">__ __ __</span> <br>
+                    <input class="gap-options--selector" name="gap-options--item" type="radio" value="number-first">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d __ __</span> <br>
+                </fieldset>
                 <button class="gap-options--control gap-options--control__inactive gap-options--hide-numbers" data-state="0">Hide gap numbers</button>
                 <button class="gap-options--control gap-options--control__active gap-options--remove-articles" data-state="0">Toggle articles</button>
             </form>

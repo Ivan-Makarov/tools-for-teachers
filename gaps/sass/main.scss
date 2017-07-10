@@ -34,7 +34,7 @@ $gap-color: $coral;
         background-color: rgba(white, 0.4);
         box-shadow: 1px 2px 0 rgba(black, 0.2);
         &:hover {
-            background-color: rgba(white, 0.7);
+            background-color: rgba(white, 0.9);
         }
     }
     &__inactive {
@@ -68,24 +68,29 @@ body {
 
 .process-button {
     display: block;
+    position: absolute;
+    bottom: 10px;
+    left: 690px;
     height: 50px;
     width: 100px;
     border-radius: 5px;
     border: 0;
-    position: absolute;
-    bottom: 00px;
-    left: 830px;
+    background-color: rgba(black, 0.4);
+    box-shadow: 2px 2px 0 rgba(black, 0.8);
     cursor: pointer;
-    background-color: $button-color;
-    box-shadow: 2px 2px 0 darken($button-color, 50%);
+    font-size: 16px;
+    color: white;
     &:active {
-        bottom: -2px;
-        left: 832px;
+        bottom: 8px;
+        left: 692px;
         box-shadow: 0 0 0 0;
         transition: 0.1s;
     }
     &:focus {
         outline: 0;
+    }
+    &:hover {
+        background-color: rgba(black, 0.6);
     }
 }
 
@@ -93,24 +98,29 @@ body {
     box-sizing: border-box;
     margin-top: 20px;
     position: relative;
-    padding: 10px;
+    padding: 25px;
     border-radius: 5px;
-    border: 1px solid $select-color;
     background-color: white;
     box-shadow: 0 0 20px rgba(black, 0.2);
 }
 
 .processed-text {
     line-height: 1.7em;
+    .gap-index {
+        line-height: 10px;
+    }
+    p {
+        margin: 0 0 20px 0;
+    }
 }
 
 .wordlist-box{
-    position: absolute;
-    top: 0;
-    left: 830px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
     padding: 15px;
     min-width: 200px;
-    background-color: lighten($wordlist-color, 5%);
+    background-color: rgba(black, 0.05);
     border-radius: 8px;
     white-space: nowrap;
     p {
@@ -142,8 +152,8 @@ body {
     margin-bottom: 7px;
     padding: 0 4px 2px;
     border-radius: 3px;
-    background-color: lighten($wordlist-color, 10%);
-    box-shadow: 1px 2px 0 darken($wordlist-color, 10%);
+    background-color: rgba(white, 0.5);
+    box-shadow: 1px 2px 0 rgba(black, 0.2);
     min-height: 1.2em;
     &__active {
         position: relative;
@@ -160,8 +170,7 @@ body {
         display: block;
         height: 10px;
         width: 10px;
-        // font-size: 22px;
-        color: darken($wordlist-color, 10%);
+        color: rgba(black, 0.2);
     }
     &:hover {
         &::after {
@@ -173,8 +182,7 @@ body {
             display: block;
             height: 10px;
             width: 10px;
-            // font-size: 22px;
-            color: darken($wordlist-color, 50%);
+            color: rgba(black, 0.8);
         }
     }
 }
@@ -193,7 +201,7 @@ body {
 .gap {
     padding: 1px 4px;
     cursor: pointer;
-    border: 2px solid orange;
+    border: 1px solid orange;
     border-radius: 3px;
     white-space: nowrap;
     background-color: white;
@@ -209,17 +217,29 @@ body {
 }
 
 .gap-options {
-    position: absolute;
-    top: 0;
-    left: -190px;
+    position: fixed;
+    top: 20px;
+    left: 20px;
     padding: 15px;
-    background-color: lighten($blue, 10%);
+    background-color: rgba(black, 0.05);
     border-radius: 8px;
     input {
         margin-bottom: 15px;
         &:first-of-type {
             margin-top: 15px;
         }
+    }
+    &--title {
+        font-weight: 700;
+        padding: 0 4px;
+        margin: 0 0 5px 0;
+    }
+    &--selectors {
+        border: 0;
+        padding: 0;
+    }
+    &--selector {
+
     }
     &--control {
         @include control-button;
