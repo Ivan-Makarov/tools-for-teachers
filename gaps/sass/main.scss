@@ -6,19 +6,14 @@ $beige: #e6e1b3;
 $green: #bfe6b3;
 $turqoise: #b3e6d2;
 $lightgray: #f9f9f9;
-
 $body-color: $lightgray;
 $button-color: $purple;
 $select-color: $green;
 $wordlist-color: $turqoise;
 $gap-color: $coral;
-
-@import url('https://fonts.googleapis.com/css?family=PT+Sans:400,700');
-
-@import url('https://fonts.googleapis.com/css?family=Fira+Sans:400,700');
-
+@import url( 'https://fonts.googleapis.com/css?family=PT+Sans:400,700');
+@import url( 'https://fonts.googleapis.com/css?family=Fira+Sans:400,700');
 $pt: 'PT Sans', Arial, Helvetica, sans-serif;
-
 @mixin control-button {
     box-sizing: border-box;
     cursor: pointer;
@@ -28,22 +23,27 @@ $pt: 'PT Sans', Arial, Helvetica, sans-serif;
     position: relative;
     border-radius: 3px;
     font-family: $pt;
+
     &:focus {
         outline: none;
     }
+
     &:active {
         top: 2px;
         left: 1px;
         box-shadow: 0 0 0;
     }
+
     &__active {
         transition: 0.5s;
         background-color: rgba(white, 0.4);
         box-shadow: 1px 2px 0 rgba(black, 0.2);
+
         &:hover {
             background-color: rgba(white, 0.9);
         }
     }
+
     &__inactive {
         transition: 0.5s;
         box-shadow: 0 0 0 0;
@@ -61,8 +61,8 @@ body {
 }
 
 .wrapper {
-    width: 800px;
-    margin: 0 auto;
+    width: auto;
+    margin: 0 270px 0 220px;
     position: relative;
 }
 
@@ -83,9 +83,9 @@ body {
         display: block;
         position: absolute;
         bottom: -60px;
-        left: 350px;
+        left: 0;
         height: 50px;
-        width: 100px;
+        width: 100%;
         border-radius: 5px;
         border: 0;
         background-color: rgba(green, 0.4);
@@ -97,15 +97,18 @@ body {
         text-transform: uppercase;
         letter-spacing: 0.1em;
         font-weight: 700;
+
         &:active {
             bottom: -62px;
-            left: 352px;
+            left: 2px;
             box-shadow: 0 0 0 0;
             transition: 0.1s;
         }
+
         &:focus {
             outline: 0;
         }
+
         &:hover {
             background-color: rgba(green, 0.5);
         }
@@ -117,19 +120,23 @@ body {
     margin-top: 20px;
     position: relative;
     padding: 30px;
-    border-radius: 5px;
+    border-radius: 8px;
     background-color: white;
     box-shadow: 0 0 20px rgba(black, 0.2);
+
     &--text {
         line-height: 1.7em;
+
         .gap-index {
             line-height: 10px;
         }
+
         p {
             margin-top: 0;
             margin-bottom: 20px;
+
             &:last-of-type {
-                margin-bottom: 0px;
+                margin-bottom: 0;
             }
         }
     }
@@ -140,30 +147,35 @@ body {
     top: 20px;
     right: 20px;
     padding: 15px;
-    min-width: 200px;
+    width: 200px;
     background-color: rgba(black, 0.05);
     border-radius: 8px;
     white-space: nowrap;
+
     p {
         font-weight: 700;
         padding: 0 4px;
-        margin: 0 0 10px 0;
+        margin: 0 0 10px;
     }
+
     &--controls {
         position: absolute;
         top: 15px;
         right: 15px;
     }
+
     &--btn {
         @include control-button;
         margin-left: 5px;
     }
+
     &--list {
         list-style-type: none;
         position: relative;
         padding: 0;
         margin: 0;
     }
+
     &--item {
         position: relative;
         cursor: pointer;
@@ -173,17 +185,20 @@ body {
         background-color: rgba(white, 0.5);
         box-shadow: 1px 2px 0 rgba(black, 0.2);
         min-height: 1.2em;
+
         &__active {
             position: relative;
             top: 2px;
             left: 2px;
             box-shadow: 0 0 0 0;
         }
+
         &__under-edit {
             padding: 0;
             box-shadow: 0 0 0 0;
             margin-bottom: 9px;
         }
+
         &::after {
             position: absolute;
             top: 3px;
@@ -195,6 +210,7 @@ body {
             width: 10px;
             color: rgba(black, 0.2);
         }
+
         &:hover {
             &::after {
                 position: absolute;
@@ -209,6 +225,7 @@ body {
             }
         }
     }
+
     &--edit {
         box-sizing: border-box;
         position: absolute;
@@ -229,6 +246,7 @@ body {
 
 .removable-word {
     padding: 2px;
+
     &:hover {
         padding: 2px;
         background-color: orange;
@@ -245,9 +263,12 @@ body {
     border-radius: 3px;
     white-space: nowrap;
     background-color: white;
+    transition: 0.3s;
+
     &:hover {
         background-color: lighten(orange, 40%);
     }
+
     &__unclickable {
         &:hover {
             cursor: default;
@@ -263,32 +284,56 @@ body {
     padding: 15px;
     background-color: rgba(black, 0.05);
     border-radius: 8px;
-    input {
-        margin-bottom: 15px;
-        &:first-of-type {
-            margin-top: 15px;
-        }
-    }
+    width: 150px;
     &--title {
         font-weight: 700;
-        padding: 0 4px;
-        margin: 0 0 5px 0;
+        margin: 0;
+        margin-bottom: 15px;
     }
+    &--subtitle {
+        font-weight: 400;
+        margin: 0;
+        margin-bottom: 15px;
+    }
+
     &--selectors {
         border: 0;
-        padding: 0;
+        padding: 10px;
+        margin: 0;
+        border-radius: 3px;
+        background-color: rgba(white, 0.4);
     }
-    &--selector {
 
+    &--selector {
+        display: none;
+        &:checked + label {
+            .gap {
+                border: 3px solid orange;
+                cursor: pointer;
+            }
+        }
     }
+
     &--label {
+        display: block;
+        margin-bottom: 15px;
         font-family: $pt;
+        cursor: pointer;
+        &:hover {
+            color: orange;
+            .gap {
+                background-color: lighten(orange, 40%);
+                cursor: pointer;
+            }
+        }
     }
+
     &--btn {
         @include control-button;
         display: block;
         width: 100%;
         padding: 5px;
+
         &:nth-child(n+1) {
             margin-top: 10px;
         }

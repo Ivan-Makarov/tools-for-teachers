@@ -10,6 +10,7 @@ const gapModeSelectors = [...draft.querySelectorAll('.gap-controls--selector')];
 const clearWordlistButton = wordlistBox.querySelector('.clear-wordlist');
 const hideNumbersButton = draft.querySelector('.gap-controls--hide-numbers');
 const removeArtButton = draft.querySelector('.gap-controls--remove-articles');
+const printBtn = draft.querySelector('.gap-controls--open-print');
 
 let gaps = [...processedText.querySelectorAll('.gap')];
 let wordlistItems = [...wordlist.querySelectorAll('.wordlist--item')];
@@ -344,3 +345,10 @@ function toggleArticles(e) {
         e.target.dataset.state = 0;
     }
 }
+
+function openPrint(e) {
+    e.preventDefault();
+    window.print();
+}
+
+printBtn.addEventListener('click', openPrint);

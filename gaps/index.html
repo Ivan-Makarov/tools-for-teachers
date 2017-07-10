@@ -30,23 +30,25 @@
                 <ul class="wordlist--list"></ul>
             </div>
             <form class="gap-controls">
+                <p class="gap-controls--title">Options</p>
                 <fieldset class="gap-controls--selectors">
-                    <p class="gap-controls--title">Gap type</p>
+                    <p class="gap-controls--subtitle">Gap type:</p>
 
                     <input class="gap-controls--selector" id="selector-plain" name="gap-type-selector" type="radio" value="plain" checked>
-                    <label class="gap-controls--label" for="selector-plain">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">_____</span></label> <br>
+                    <label class="gap-controls--label" for="selector-plain" title="Leave a plain gap">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">_____</span></label>
 
                     <input class="gap-controls--selector" id="selector-plain-first" name="gap-type-selector" type="radio" value="plain-first">
-                    <label class="gap-controls--label" for="selector-plain-first">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d_____</span></label> <br>
+                    <label class="gap-controls--label" for="selector-plain-first" title="Leave a plain gap with first letter">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d_____</span></label>
 
                     <input class="gap-controls--selector" id="selector-number" name="gap-type-selector" type="radio" value="number">
-                    <label class="gap-controls--label" for="selector-number">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">__ __ __</span></label> <br>
+                    <label class="gap-controls--label" for="selector-number" title="Leave an underscore for each letter">dog <i class="fa fa-long-arrow-right" aria-hidden="true" ></i> <span class="gap gap__unclickable">__ __ __</span></label>
 
                     <input class="gap-controls--selector" id="selector-number-first" name="gap-type-selector" type="radio" value="number-first">
-                    <label class="gap-controls--label" for="selector-number-first">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d __ __</span></label> <br>
+                    <label class="gap-controls--label" for="selector-number-first" title="Leave an underscore for each letter and first letter">dog <i class="fa fa-long-arrow-right" aria-hidden="true"></i> <span class="gap gap__unclickable">d __ __</span></label>
                 </fieldset>
                 <button class="gap-controls--btn gap-controls--btn__inactive gap-controls--hide-numbers" data-state="0">Hide gap numbers</button>
                 <button class="gap-controls--btn gap-controls--btn__active gap-controls--remove-articles" data-state="0">Toggle articles</button>
+                <button class="gap-controls--btn gap-controls--btn__active gap-controls--open-print" data-state="0">Print or save pdf...</button>
             </form>
         </div>
     </div>
