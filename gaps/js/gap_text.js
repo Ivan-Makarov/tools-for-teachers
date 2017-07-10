@@ -1,18 +1,18 @@
 'use strict';
 
-const textToProcess = document.querySelector('.raw-text');
-const processButton = document.querySelector('.process-button');
+const textToProcess = document.querySelector('.text-input--raw-text');
+const processButton = document.querySelector('.text-input--process-button');
 const draft = document.querySelector('.worksheet-draft');
-const processedText = draft.querySelector('.processed-text');
-const wordlistBox = draft.querySelector('.wordlist-box');
-const wordlist = wordlistBox.querySelector('.wordlist');
-const gapModeSelectors = [...draft.querySelectorAll('.gap-options--selector')];
+const processedText = draft.querySelector('.worksheet-draft--text');
+const wordlistBox = draft.querySelector('.wordlist');
+const wordlist = wordlistBox.querySelector('.wordlist--list');
+const gapModeSelectors = [...draft.querySelectorAll('.gap-controls--selector')];
 const clearWordlistButton = wordlistBox.querySelector('.clear-wordlist');
-const hideNumbersButton = draft.querySelector('.gap-options--hide-numbers');
-const removeArtButton = draft.querySelector('.gap-options--remove-articles');
+const hideNumbersButton = draft.querySelector('.gap-controls--hide-numbers');
+const removeArtButton = draft.querySelector('.gap-controls--remove-articles');
 
 let gaps = [...processedText.querySelectorAll('.gap')];
-let wordlistItems = [...wordlist.querySelectorAll('.wordlist-item')];
+let wordlistItems = [...wordlist.querySelectorAll('.wordlist--item')];
 let gapMode = 'plain';
 
 let editWordlistButton = wordlistBox.querySelector('.edit-wordlist');
@@ -43,17 +43,25 @@ function addGapMarker(gap) {
     }
 
     function addLetterCount() {
-        for (let i of gap.dataset.word) {
-            gapMarker += '__ ';
+        for (let i in gap.dataset.word) {
+            if (i == 0) {
+                gapMarker += "__";
+            } else if (gap.dataset.word[i].match(/\-/)) {
+                gapMarker += " -";
+            } else {
+                gapMarker += ' __';
+            }
         }
     }
 
     function addFirstLetterCount() {
-        for (let i of gap.dataset.word) {
-            if (gap.dataset.word.indexOf(i) == 0) {
-                gapMarker += i;
+        for (let i in gap.dataset.word) {
+            if (i == 0) {
+                gapMarker += gap.dataset.word[i];
+            } else if (gap.dataset.word[i].match(/\-/)) {
+                gapMarker += " -";
             } else {
-                gapMarker += '__ ';
+                gapMarker += ' __';
             }
         }
     }
@@ -79,7 +87,7 @@ function addGapMarker(gap) {
 }
 
 function updateWordlist() {
-    wordlistItems = [...wordlist.querySelectorAll('.wordlist-item')]
+    wordlistItems = [...wordlist.querySelectorAll('.wordlist--item')]
 }
 
 function removeWord(item) {
@@ -95,7 +103,7 @@ function removeWord(item) {
 
 function removeWordOnClick(e) {
     const item = e.target;
-    if (item.classList.contains('wordlist-item')) {
+    if (item.classList.contains('wordlist--item')) {
         removeWord(item);
     }
 }
@@ -141,7 +149,7 @@ processButton.addEventListener('click', function(e) {
         function addGap(word) {
             const listItem = document.createElement('li');
 
-            listItem.classList.add('wordlist-item');
+            listItem.classList.add('wordlist--item');
             listItem.title = 'Click to remove from list';
             listItem.textContent = listItem.dataset.word = word.dataset.word = word.textContent;
             listItem.dataset.id = word.dataset.id = rand(1, 100000);
@@ -178,8 +186,8 @@ processButton.addEventListener('click', function(e) {
 
     function activate(e) {
         const item = e.target;
-        if (item.classList.contains('wordlist-item')) {
-            item.classList.add('wordlist-item__active');
+        if (item.classList.contains('wordlist--item')) {
+            item.classList.add('wordlist--item__active');
         }
     }
 
@@ -212,17 +220,23 @@ function editWordlist() {
         btn.classList.remove('edit-wordlist');
         btn.classList.add('save-wordlist');
         btn.innerHTML = '<i class="fa fa-floppy-o" aria-hidden="true"></i>';
+        btn.title = 'Save wordlist';
         function openEdits(item) {
-            item.innerHTML = `<input value="${item.dataset.word}" type="text">`;
+            item.innerHTML = `<input class="wordlist--edit" value="${item.textContent}" type="text">`;
+            item.classList.add('wordlist--item__under-edit');
+            item.title = '';
         }
         wordlistItems.forEach(openEdits);
     } else {
         btn.classList.remove('save-wordlist');
         btn.classList.add('edit-wordlist')
         btn.innerHTML = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>';
+        btn.title = 'Edit wordlist';
         function saveEdits(item) {
             const newWord = item.querySelector('input').value;
             item.innerHTML = `${newWord}`;
+            item.classList.remove('wordlist--item__under-edit');
+            item.title = 'Click to remove from list'
         }
         wordlistItems.forEach(saveEdits);
     }
@@ -234,6 +248,8 @@ function onEditBtns() {
     clearWordlistButton.classList.remove('wordlist--btn__inactive');
     editWordlistButton.classList.add('wordlist--btn__active');
     clearWordlistButton.classList.add('wordlist--btn__active');
+    clearWordlistButton.title = "Clear all";
+    editWordlistButton.title = "Edit wordlist";
 }
 
 function offEditBtns() {
@@ -243,6 +259,8 @@ function offEditBtns() {
     clearWordlistButton.classList.add('wordlist--btn__inactive');
     editWordlistButton.classList.remove('wordlist--btn__active');
     clearWordlistButton.classList.remove('wordlist--btn__active');
+    clearWordlistButton.title = "";
+    editWordlistButton.title = "";
 }
 
 function hideGapNumbers(e) {
@@ -261,8 +279,8 @@ function hideGapNumbers(e) {
 function onHideGapNumbersBtn() {
     hideNumbersButton.removeEventListener('click', blockButton);
     hideNumbersButton.addEventListener('click', hideGapNumbers);
-    hideNumbersButton.classList.remove('gap-options--control__inactive');
-    hideNumbersButton.classList.add('gap-options--control__active');
+    hideNumbersButton.classList.remove('gap-controls--btn__inactive');
+    hideNumbersButton.classList.add('gap-controls--btn__active');
 }
 
 function offHideGapNumbersBtn() {
@@ -270,8 +288,8 @@ function offHideGapNumbersBtn() {
     hideNumbersButton.addEventListener('click', blockButton);
     hideNumbersButton.dataset.state = 0;
     hideNumbersButton.textContent = 'Hide gap numbers';
-    hideNumbersButton.classList.remove('gap-options--control__active');
-    hideNumbersButton.classList.add('gap-options--control__inactive');
+    hideNumbersButton.classList.remove('gap-controls--btn__active');
+    hideNumbersButton.classList.add('gap-controls--btn__inactive');
 }
 
 hideNumbersButton.addEventListener('click', blockButton)
