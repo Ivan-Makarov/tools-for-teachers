@@ -60,6 +60,7 @@ body {
     font-family: 'PT Sans', Arial, Helvetica, sans-serif;
 }
 
+
 .wrapper {
     width: auto;
     margin: 0 270px 0 220px;
@@ -67,6 +68,9 @@ body {
 }
 
 .text-input {
+    position: relative;
+    width: 70%;
+    margin: 0 auto;
     &--raw-text {
         box-sizing: border-box;
         display: block;
