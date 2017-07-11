@@ -18,12 +18,33 @@ let gapMode = 'plain';
 
 let editWordlistButton = wordlistBox.querySelector('.edit-wordlist');
 
+const regexWord = /[\w\-]+/g;
+const regexNewLine = /\n/;
+const regexArt = /\ba\b|\ban\b|\bthe\b/i;
+const regexNewSentence = /[\.+\?!]/;
+
+processButton.addEventListener('click', processRawText);
+gapModeSelectors.forEach(changeGapMode);
+clearWordlistButton.addEventListener('click', clearWordlist);
+hideNumbersButton.addEventListener('click', blockButton);
+printBtn.addEventListener('click', openPrint);
+
 function rand(min,max) {
     return Math.floor( Math.random() * ( max - min + 1 ) + min );
 }
 
 function updateGaps() {
     gaps = [...processedText.querySelectorAll('.gap')]
+}
+
+function swapClassnames(item, from, to) {
+    item.classList.remove(from);
+    item.classList.add(to);
+}
+
+function swapEventListeners(item, e, from, to) {
+    item.removeEventListener(e, from);
+    item.addEventListener(e, to);
 }
 
 function updateGapIndeces() {
@@ -43,14 +64,20 @@ function addGapMarker(gap) {
         gapMarker = gap.dataset.word[0] + '_______________';
     }
 
+    function addLetterGap(i) {
+        if (gap.dataset.word[i].match(/\-/)) {
+            gapMarker += " -";
+        } else {
+            gapMarker += ' __';
+        }
+    }
+
     function addLetterCount() {
         for (let i in gap.dataset.word) {
             if (i == 0) {
                 gapMarker += "__";
-            } else if (gap.dataset.word[i].match(/\-/)) {
-                gapMarker += " -";
             } else {
-                gapMarker += ' __';
+                addLetterGap(i);
             }
         }
     }
@@ -59,17 +86,15 @@ function addGapMarker(gap) {
         for (let i in gap.dataset.word) {
             if (i == 0) {
                 gapMarker += gap.dataset.word[i];
-            } else if (gap.dataset.word[i].match(/\-/)) {
-                gapMarker += " -";
             } else {
-                gapMarker += ' __';
+                addLetterGap(i);
             }
         }
     }
 
     switch(gapMode) {
         case 'plain':
-            gapMarker = "_______________";
+            gapMarker = '_______________';
             break;
         case 'plain-first':
             addFirstLetter();
@@ -80,11 +105,14 @@ function addGapMarker(gap) {
         case 'number-first':
             addFirstLetterCount();
             break;
+        case 'article': {
+            gapMarker = '____'
+        }
         default:
             break;
     }
 
-    gap.innerHTML = gapMarker;
+    gap.textContent = gapMarker;
 }
 
 function updateWordlist() {
@@ -94,12 +122,11 @@ function updateWordlist() {
 function removeWord(item) {
     const textItem = processedText.querySelector(`[data-id="${item.dataset.id}"]`);
     textItem.textContent = item.dataset.word;
-    textItem.classList.remove('gap');
-    textItem.classList.add('removable-word');
+    swapClassnames(textItem, 'gap', 'removable-word')
     wordlist.removeChild(item);
     updateGapIndeces();
     updateWordlist()
-    handleControls();
+    updateControls();
 }
 
 function removeWordOnClick(e) {
@@ -109,37 +136,49 @@ function removeWordOnClick(e) {
     }
 }
 
-processButton.addEventListener('click', function(e) {
+function showItem(item) {
+    item.classList.remove('hidden');
+}
+
+function hideItem(item) {
+    item.classList.add('hidden');
+}
+
+function itemToTag(item, tag, title, classnames = []) {
+    return `<${tag} class="${classnames.join(' ')}" title="${title}">${item}</${tag}>`;
+}
+
+function wrapItems(text, regex, tag, title, classnames = []) {
+    function toTag(match) {
+        return itemToTag(match, tag, title, classnames);
+    }
+    return text.replace(regex, toTag);
+}
+
+function wrapChunks(text, separator, tag, classnames = []) {
+    function breakText(text) {
+        return text.split(separator);
+    }
+
+    function toTag(tags, current) {
+        return tags += `<${tag} class="${classnames.join(' ')}">${current}</${tag}>`;
+    }
+
+    return breakText(text).reduce(toTag, '');
+}
+
+function processRawText(e) {
     e.preventDefault();
 
-    draft.classList.remove('hidden');
-    textToProcess.classList.add('hidden');
-    processButton.classList.add('hidden');
+    hideItem(textToProcess);
+    hideItem(processButton);
+    showItem(draft);
 
-    function breakLines(text) {
-        return text.split(/\n/);
-    }
-
-    function makeParagraphs(total, current) {
-        return total += `<p>${current}</p>`;
-    }
-
-    const paras = breakLines(textToProcess.value).reduce(makeParagraphs, '');
-
-    function replacer(match) {
-        if (match === 'br' || match === 'p') {
-            return match;
-        } else {
-            return `<span class="removable-word" title="Click to add gap">${match}</span>`;
-        }
-    }
-
-    processedText.innerHTML = paras.replace(/[\w\-]+/g, replacer);
-
-    const words = [...processedText.querySelectorAll('.removable-word')];
+    const textWrapInSpan = wrapItems(textToProcess.value, regexWord, 'span', 'Click to remove word', ['removable-word']);
+    const textWrapInP = wrapChunks(textWrapInSpan, regexNewLine, 'p')
+    processedText.innerHTML = textWrapInP;
 
     function handleGap(e) {
-
         const item = e.target;
         if (item.classList.contains('gap')) {
             removeGap(item);
@@ -157,8 +196,7 @@ processButton.addEventListener('click', function(e) {
 
             wordlist.appendChild(listItem);
 
-            word.classList.remove('removable-word')
-            word.classList.add('gap');
+            swapClassnames(word, 'removable-word', 'gap');
             word.title = 'Click to remove gap';
             addGapMarker(word);
 
@@ -171,21 +209,17 @@ processButton.addEventListener('click', function(e) {
         function removeGap(item) {
             const wordlistItem = wordlist.querySelector(`[data-id="${item.dataset.id}"]`);
             item.textContent = item.dataset.word;
-            item.classList.remove('gap');
-            item.classList.add('removable-word');
+
+            swapClassnames(item, 'gap', 'removable-word');
             wordlist.removeChild(wordlistItem);
         }
 
         updateGapIndeces();
         updateWordlist();
-        handleControls();
+        updateControls();
     }
 
-    function addGapEvent(word) {
-        word.addEventListener('click', handleGap);
-    }
-
-    function activate(e) {
+    function animate(e) {
         const item = e.target;
         if (item.classList.contains('wordlist--item')) {
             item.classList.add('wordlist--item__active');
@@ -194,9 +228,9 @@ processButton.addEventListener('click', function(e) {
 
     processedText.addEventListener('click', handleGap);
     wordlist.addEventListener('click', removeWordOnClick);
-    wordlist.addEventListener('mousedown', activate);
+    wordlist.addEventListener('mousedown', animate);
     removeArtButton.addEventListener('click', toggleArticles);
-});
+}
 
 function changeGapMode(selector) {
     selector.addEventListener('change', () => {
@@ -204,11 +238,9 @@ function changeGapMode(selector) {
     });
 }
 
-gapModeSelectors.forEach(changeGapMode);
-
-clearWordlistButton.addEventListener('click', (e) => {
+function clearWordlist() {
     wordlistItems.forEach(removeWord);
-});
+}
 
 function updateBtns() {
     editWordlistButton = wordlistBox.querySelector('.edit-wordlist');
@@ -218,8 +250,7 @@ function updateBtns() {
 function editWordlist() {
     const btn = editWordlistButton;
     if (btn.classList.contains('edit-wordlist')) {
-        btn.classList.remove('edit-wordlist');
-        btn.classList.add('save-wordlist');
+        swapClassnames(btn, 'edit-wordlist', 'save-wordlist');
         btn.innerHTML = '<i class="fa fa-floppy-o" aria-hidden="true"></i>';
         btn.title = 'Save wordlist';
         function openEdits(item) {
@@ -229,8 +260,7 @@ function editWordlist() {
         }
         wordlistItems.forEach(openEdits);
     } else {
-        btn.classList.remove('save-wordlist');
-        btn.classList.add('edit-wordlist')
+        swapClassnames(btn, 'save-wordlist', 'edit-wordlist');
         btn.innerHTML = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>';
         btn.title = 'Edit wordlist';
         function saveEdits(item) {
@@ -245,10 +275,8 @@ function editWordlist() {
 
 function onEditBtns() {
     editWordlistButton.addEventListener('click', editWordlist);
-    editWordlistButton.classList.remove('wordlist--btn__inactive');
-    clearWordlistButton.classList.remove('wordlist--btn__inactive');
-    editWordlistButton.classList.add('wordlist--btn__active');
-    clearWordlistButton.classList.add('wordlist--btn__active');
+    swapClassnames(editWordlistButton, 'wordlist--btn__inactive', 'wordlist--btn__active');
+    swapClassnames(clearWordlistButton, 'wordlist--btn__inactive', 'wordlist--btn__active');
     clearWordlistButton.title = "Clear all";
     editWordlistButton.title = "Edit wordlist";
 }
@@ -256,10 +284,8 @@ function onEditBtns() {
 function offEditBtns() {
     editWordlistButton.removeEventListener('click', editWordlist);
     editWordlistButton.innerHTML = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>';
-    editWordlistButton.classList.add('wordlist--btn__inactive');
-    clearWordlistButton.classList.add('wordlist--btn__inactive');
-    editWordlistButton.classList.remove('wordlist--btn__active');
-    clearWordlistButton.classList.remove('wordlist--btn__active');
+    swapClassnames(editWordlistButton, 'wordlist--btn__active', 'wordlist--btn__inactive');
+    swapClassnames(clearWordlistButton, 'wordlist--btn__active', 'wordlist--btn__inactive');
     clearWordlistButton.title = "";
     editWordlistButton.title = "";
 }
@@ -268,34 +294,28 @@ function hideGapNumbers(e) {
     e.preventDefault();
     const numbers = [...document.querySelectorAll('sup')];
     numbers.forEach(number => number.classList.toggle('hidden'));
-    if (hideNumbersButton.dataset.state == 0) {
-        hideNumbersButton.dataset.state = 1;
+    if (hideNumbersButton.dataset.state === 'shown') {
+        hideNumbersButton.dataset.state = 'hidden';
         hideNumbersButton.textContent = 'Show gap numbers';
     } else {
-        hideNumbersButton.dataset.state = 0;
+        hideNumbersButton.dataset.state = 'hidden';
         hideNumbersButton.textContent = 'Hide gap numbers';
     }
 }
 
 function onHideGapNumbersBtn() {
-    hideNumbersButton.removeEventListener('click', blockButton);
-    hideNumbersButton.addEventListener('click', hideGapNumbers);
-    hideNumbersButton.classList.remove('gap-controls--btn__inactive');
-    hideNumbersButton.classList.add('gap-controls--btn__active');
+    swapEventListeners(hideNumbersButton, 'click', blockButton, hideGapNumbers);
+    swapClassnames(hideNumbersButton, 'gap-controls--btn__inactive', 'gap-controls--btn__active');
 }
 
 function offHideGapNumbersBtn() {
-    hideNumbersButton.removeEventListener('click', hideGapNumbers);
-    hideNumbersButton.addEventListener('click', blockButton);
-    hideNumbersButton.dataset.state = 0;
+    swapEventListeners(hideNumbersButton, 'click', hideGapNumbers, blockButton);
+    hideNumbersButton.dataset.state = 'shown';
     hideNumbersButton.textContent = 'Hide gap numbers';
-    hideNumbersButton.classList.remove('gap-controls--btn__active');
-    hideNumbersButton.classList.add('gap-controls--btn__inactive');
+    swapClassnames(hideNumbersButton, 'gap-controls--btn__active', 'gap-controls--btn__inactive');
 }
 
-hideNumbersButton.addEventListener('click', blockButton)
-
-function handleControls() {
+function updateControls() {
     if (gaps.length === 0) {
         offEditBtns()
         offHideGapNumbersBtn();
@@ -313,36 +333,33 @@ function blockButton(e) {
 function toggleArticles(e) {
     e.preventDefault();
 
-    function restoreArticle(gap) {
-        const article = gap.dataset.article;
-        gap.outerHTML = `<span class="removable-word" title="Click to add gap">${article}</span>`
+    function isArticle(word) {
+        return word.match(regexArt) ? true : false;
     }
 
-    if (e.target.dataset.state == 0) {
-        function isArticle(item) {
-            const regexArt = /\ba\b|\ban\b|\bthe\b|\bA\b|\bAN\b|\bTHE\b|\bAn\b|\bThe\b/g;
-            const article = item.textContent.match(regexArt);
-            if (article !== null) {
-                return true;
-            } else {
-                return false;
-            }
+    function removeArticle(word) {
+        if (isArticle(word.textContent)) {
+            let saveGapMode = gapMode;
+            gapMode = 'article';
+            word.dataset.word = word.textContent;
+            addGapMarker(word);
+            swapClassnames(word, 'removable-word', 'gap-article')
+            gapMode = saveGapMode;
         }
+    }
 
+    function restoreArticle(gap) {
+        gap.outerHTML = itemToTag(gap.dataset.word, 'span', 'Click to add gap', ['removable-word'])
+    }
+
+    if (e.target.dataset.state === 'shown') {
         const words = [...processedText.querySelectorAll('.removable-word')];
-
-        function artRem(word) {
-            if (isArticle(word)) {
-                word.outerHTML = `<span class="gap-article" title="" data-article="${word.textContent}">___</span>`;
-            }
-        }
-
-        words.forEach(artRem);
-        e.target.dataset.state = 1;
+        words.forEach(removeArticle);
+        e.target.dataset.state = 'hidden';
     } else {
         const articleGaps = [...processedText.querySelectorAll('.gap-article')];
         articleGaps.forEach(restoreArticle);
-        e.target.dataset.state = 0;
+        e.target.dataset.state = 'shown';
     }
 }
 
@@ -350,5 +367,3 @@ function openPrint(e) {
     e.preventDefault();
     window.print();
 }
-
-printBtn.addEventListener('click', openPrint);
