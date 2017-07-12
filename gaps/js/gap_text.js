@@ -24,7 +24,7 @@ let editWordlistButton = wordlistBox.querySelector('.edit-wordlist');
 const regexWord = /[\w\-]+/g;
 const regexNewLine = /\n/;
 const regexArt = /\ba\b|\ban\b|\bthe\b/i;
-const regexNewSentence = /([\.+\?!])/;
+const regexNewSentence = /([\.+\?!]\s)/;
 
 processButton.addEventListener('click', processRawText);
 gapTypeSelectors.forEach(changeGapType);
@@ -127,16 +127,24 @@ function removeWord(item) {
     const textItem = processedText.querySelector(`[data-id="${item.dataset.id}"]`);
     textItem.textContent = item.dataset.word;
     swapClassnames(textItem, 'gap', 'removable-word')
-    wordlist.removeChild(item);
+    wordlist.removeChild(item.parentElement);
     updateGapIndeces();
     updateWordlist()
     updateControls();
 }
 
+
 function removeWordOnClick(e) {
     const item = e.target;
-    if (item.classList.contains('wordlist--item')) {
-        removeWord(item);
+    e.stopPropagation();
+    // if (item.classList.contains('wordlist--item')) {
+    //     removeWord(item);
+    // }
+    // else if (item.classList.contains('wordlist--remove-item-btn')) {
+    //     removeWord(item.previousElementSibling);
+    // } else
+    if (item.classList.contains('fa')) {
+        removeWord(item.parentElement.previousElementSibling);
     }
 }
 
@@ -203,16 +211,33 @@ function processRawText(e) {
         }
 
         function addGap(word) {
-            const listItem = document.createElement('li');
-
+            const listItem = document.createElement('div');
             listItem.classList.add('wordlist--item');
+            if (gapMode === 'sentence') {
+                listItem.classList.add('wordlist--item__sentence');
+            }
             listItem.title = 'Click to remove from list';
             listItem.textContent = listItem.dataset.word = word.dataset.word = word.textContent;
             listItem.dataset.id = word.dataset.id = rand(1, 100000);
 
-            wordlist.appendChild(listItem);
+            const rmBtn = document.createElement('span');
+            rmBtn.innerHTML = '<i class="fa fa-times" aria-hidden="true">';
+            rmBtn.classList.add('wordlist--remove-item-btn');
+            rmBtn.addEventListener('click', removeWordOnClick)
+
+            const wordlistEntry = document.createElement('li');
+            wordlistEntry.classList.add('wordlist--entry');
+            wordlistEntry.appendChild(listItem);
+            wordlistEntry.appendChild(rmBtn);
+
+            wordlist.appendChild(wordlistEntry);
 
             swapClassnames(word, 'removable-word', 'gap');
+
+            if (gapMode === 'sentence') {
+                word.classList.add('gap__sentence');
+            }
+
             word.title = 'Click to remove gap';
             addGapMarker(word);
 
@@ -226,7 +251,7 @@ function processRawText(e) {
             item.textContent = item.dataset.word;
 
             swapClassnames(item, 'gap', 'removable-word');
-            wordlist.removeChild(wordlistItem);
+            wordlist.removeChild(wordlistItem.parentElement);
         }
 
         updateGapIndeces();
@@ -300,7 +325,11 @@ function editWordlist() {
         btn.innerHTML = '<i class="fa fa-floppy-o" aria-hidden="true"></i>';
         btn.title = 'Save wordlist';
         function openEdits(item) {
-            item.innerHTML = `<input class="wordlist--edit" value="${item.textContent}" type="text">`;
+            if (gapMode === 'word') {
+                item.innerHTML = `<div class="wordlist--edit wordlist--edit__word" data-value="${item.textContent}" type="text" contenteditable="true">${item.textContent}</div>`;
+            } else if (gapMode === 'sentence') {
+                item.innerHTML = `<div class="wordlist--edit wordlist--edit__sentence" data-value="${item.textContent}" contenteditable="true">${item.textContent}</div>`;
+            }
             item.classList.add('wordlist--item__under-edit');
             item.title = '';
         }
@@ -310,8 +339,7 @@ function editWordlist() {
         btn.innerHTML = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>';
         btn.title = 'Edit wordlist';
         function saveEdits(item) {
-            const newWord = item.querySelector('input').value;
-            item.innerHTML = `${newWord}`;
+            item.innerHTML = item.querySelector('.wordlist--edit').textContent;
             item.classList.remove('wordlist--item__under-edit');
             item.title = 'Click to remove from list'
         }
