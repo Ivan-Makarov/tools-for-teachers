@@ -302,8 +302,9 @@ body {
 
     &--selectors {
         border: 0;
-        padding: 10px;
+        padding: 15px;
         margin: 0;
+        margin-bottom: 10px;
         border-radius: 3px;
         background-color: rgba(white, 0.4);
     }
@@ -311,6 +312,7 @@ body {
     &--selector {
         display: none;
         &:checked + label {
+            font-weight: 700;
             .gap {
                 border: 3px solid orange;
                 cursor: pointer;
@@ -320,15 +322,18 @@ body {
 
     &--label {
         display: block;
-        margin-bottom: 15px;
         font-family: $pt;
         cursor: pointer;
+        margin-bottom: 15px;
         &:hover {
             color: orange;
             .gap {
                 background-color: lighten(orange, 40%);
                 cursor: pointer;
             }
+        }
+        &:last-of-type {
+            margin-bottom: 0;
         }
     }
 

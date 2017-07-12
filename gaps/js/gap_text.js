@@ -6,24 +6,28 @@ const draft = document.querySelector('.worksheet-draft');
 const processedText = draft.querySelector('.worksheet-draft--text');
 const wordlistBox = draft.querySelector('.wordlist');
 const wordlist = wordlistBox.querySelector('.wordlist--list');
-const gapModeSelectors = [...draft.querySelectorAll('.gap-controls--selector')];
+const gapTypeSelectors = [...draft.querySelectorAll('.gap-controls--type')];
 const clearWordlistButton = wordlistBox.querySelector('.clear-wordlist');
 const hideNumbersButton = draft.querySelector('.gap-controls--hide-numbers');
 const removeArtButton = draft.querySelector('.gap-controls--remove-articles');
 const printBtn = draft.querySelector('.gap-controls--open-print');
+const gapModeSelectors = draft.querySelectorAll('.gap-controls--mode');
+const gapTypeSelectorsField = draft.querySelector('.gap-controls--selectors-type');
 
 let gaps = [...processedText.querySelectorAll('.gap')];
 let wordlistItems = [...wordlist.querySelectorAll('.wordlist--item')];
-let gapMode = 'plain';
+let gapType = 'plain';
+let gapMode = 'word';
 
 let editWordlistButton = wordlistBox.querySelector('.edit-wordlist');
 
 const regexWord = /[\w\-]+/g;
 const regexNewLine = /\n/;
 const regexArt = /\ba\b|\ban\b|\bthe\b/i;
-const regexNewSentence = /[\.+\?!]/;
+const regexNewSentence = /([\.+\?!])/;
 
 processButton.addEventListener('click', processRawText);
+gapTypeSelectors.forEach(changeGapType);
 gapModeSelectors.forEach(changeGapMode);
 clearWordlistButton.addEventListener('click', clearWordlist);
 hideNumbersButton.addEventListener('click', blockButton);
@@ -49,12 +53,12 @@ function swapEventListeners(item, e, from, to) {
 
 function updateGapIndeces() {
     updateGaps();
-    gaps.forEach( (gap, index) => {
+    function setGapIndex(gap, index) {
         const gapIndexField = gap.querySelector('.gap-index');
         const gapIndex = index + 1;
-
         gapIndexField.textContent = gapIndex;
-    })
+    }
+    gaps.forEach(setGapIndex);
 }
 
 function addGapMarker(gap) {
@@ -92,7 +96,7 @@ function addGapMarker(gap) {
         }
     }
 
-    switch(gapMode) {
+    switch(gapType) {
         case 'plain':
             gapMarker = '_______________';
             break;
@@ -155,9 +159,20 @@ function wrapItems(text, regex, tag, title, classnames = []) {
     return text.replace(regex, toTag);
 }
 
-function wrapChunks(text, separator, tag, classnames = []) {
+function wrapChunks(text, separator, tag, classnames = [], includeDivider = false) {
     function breakText(text) {
-        return text.split(separator);
+        if (!includeDivider) {
+            return text.split(separator);
+        } else {
+            const chunks = text.split(separator);
+            let chunksWithDivider = [];
+            for (let i = 0; i < chunks.length; i++) {
+                if (i !== 0 && i % 2 !== 0) {
+                    chunksWithDivider.push(chunks[i - 1] + chunks[i]);
+                }
+            }
+            return chunksWithDivider;
+        }
     }
 
     function toTag(tags, current) {
@@ -166,6 +181,7 @@ function wrapChunks(text, separator, tag, classnames = []) {
 
     return breakText(text).reduce(toTag, '');
 }
+
 
 function processRawText(e) {
     e.preventDefault();
@@ -203,7 +219,6 @@ function processRawText(e) {
             const gapIndex = document.createElement('sup');
             word.appendChild(gapIndex);
             gapIndex.classList.add('gap-index');
-
         }
 
         function removeGap(item) {
@@ -232,10 +247,41 @@ function processRawText(e) {
     removeArtButton.addEventListener('click', toggleArticles);
 }
 
+function changeGapType(selector) {
+    selector.addEventListener('change', () => {
+        gapType = selector.value;
+    });
+}
+
 function changeGapMode(selector) {
     selector.addEventListener('change', () => {
         gapMode = selector.value;
+        updateText();
     });
+}
+
+function updateText() {
+    clearWordlist();
+    const paragraphs = [...processedText.querySelectorAll('p')];
+    let saveGapType = gapType;
+
+    if (gapMode === 'word') {
+        function wrapWords(p) {
+            p.innerHTML = wrapItems(p.textContent, regexWord, 'span', 'Click to remove word', ['removable-word'])
+        }
+        paragraphs.forEach(wrapWords);
+        gapType = saveGapType;
+        showItem(gapTypeSelectorsField);
+        showItem(removeArtButton);
+    } else if (gapMode === 'sentence') {
+        function wrapSentences(p) {
+            p.innerHTML = wrapChunks(p.textContent, regexNewSentence, 'span', ['removable-word'], true)
+        }
+        paragraphs.forEach(wrapSentences);
+        gapType = 'plain';
+        hideItem(gapTypeSelectorsField);
+        hideItem(removeArtButton);
+    }
 }
 
 function clearWordlist() {
@@ -339,12 +385,12 @@ function toggleArticles(e) {
 
     function removeArticle(word) {
         if (isArticle(word.textContent)) {
-            let saveGapMode = gapMode;
-            gapMode = 'article';
+            let saveGapType = gapType;
+            gapType = 'article';
             word.dataset.word = word.textContent;
             addGapMarker(word);
             swapClassnames(word, 'removable-word', 'gap-article')
-            gapMode = saveGapMode;
+            gapType = saveGapType;
         }
     }
 
